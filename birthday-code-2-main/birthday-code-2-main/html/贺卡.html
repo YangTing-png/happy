@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日彩蛋 - 特别惊喜</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* 修改背景色为暖色调，配合你的生日图片 */
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%); /* 浅粉色背景 */
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* --- 气球背景 (颜色调整为更柔和的暖色系) --- */
+        .balloon {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.6; /* 让气球淡一点，不要抢戏 */
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            width: 1px;
+            height: 40px;
+            background: #999;
+            transform: translateX(-50%);
+        }
+        /* 气球位置保持不变，颜色略作调整 */
+        .balloon:nth-child(1) { background: linear-gradient(45deg, #FF9A9E, #FECFEF); top: 10%; left: 5%; }
+        .balloon:nth-child(2) { background: linear-gradient(45deg, #a18cd1, #fbc2eb); top: 15%; left: 15%; animation-delay: -1s; }
+        .balloon:nth-child(3) { background: linear-gradient(45deg, #ffd1ff, #fad0c4); top: 20%; left: 85%; animation-delay: -2s; }
+        .balloon:nth-child(4) { background: linear-gradient(45deg, #ff9a9e, #fecfef); top: 30%; right: 10%; animation-delay: -3s; }
+        .balloon:nth-child(5) { background: linear-gradient(45deg, #a18cd1, #fbc2eb); bottom: 20%; left: 8%; animation-delay: -4s; }
+        .balloon:nth-child(6) { background: linear-gradient(45deg, #fad0c4, #ffd1ff); bottom: 25%; right: 5%; animation-delay: -5s; }
+        .balloon:nth-child(7) { background: linear-gradient(45deg, #ffecd2, #fcb69f); top: 5%; left: 70%; animation-delay: -1.5s; }
+        .balloon:nth-child(8) { background: linear-gradient(45deg, #ff9a9e, #fecfef); bottom: 10%; left: 70%; animation-delay: -2.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        /* --- 核心卡片容器 (新设计) --- */
+        .card-container {
+            display: flex;
+            width: 900px; /* 卡片总宽度 */
+            max-width: 95%;
+            height: 600px; /* 卡片高度 */
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            z-index: 10;
+            overflow: hidden; /* 确保图片圆角 */
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        /* 左侧：图片区域 */
+        .card-left {
+            flex: 1.2; /* 左侧稍微宽一点 */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保证图片填满且不变形 */
+            transition: transform 0.5s;
+        }
+        
+        /* 鼠标悬停时图片轻微放大 */
+        .card-container:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        /* 右侧：信纸/文字区域 */
+        .card-right {
+            flex: 1;
+            background-color: #FFFBF0; /* 暖米色信纸底色 */
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            text-align: center;
+            border-left: 2px dashed #e0d0b0; /* 分割线，模拟撕纸效果 */
+        }
+
+        /* 文字样式优化 */
+        .greeting-header {
+            font-family: 'Ma Shan Zheng', 'KaiTi', serif; /* 手写体 */
+            font-size: 2.5rem;
+            color: #d45d5d; /* 偏红的暖色 */
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .greeting-content {
+            font-family: 'KaiTi', 'SimKai', serif;
+            font-size: 1.2rem;
+            color: #665;
+            line-height: 2;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        /* 模拟信纸横线 */
+        .paper-line {
+            border-bottom: 1px solid rgba(200, 180, 160, 0.3);
+            display: block;
+            margin-bottom: 15px;
+            padding-bottom: 2px;
+        }
+
+        /* 礼物盒样式 (保持原有动画，调整位置) */
+        .gift-box-wrapper {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gift-box {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #FF69B4, #FFB6C1);
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            animation: shake 3s infinite;
+        }
+        
+        .gift-box:hover { transform: scale(1.1); }
+
+        .gift-box::before {
+            content: ''; position: absolute; top: -4px; left: 50%;
+            transform: translateX(-50%); width: 12px; height: 68px;
+            background: #FFD700; border-radius: 4px;
+        }
+        .gift-box::after {
+            content: ''; position: absolute; top: 24px; left: -4px;
+            width: 68px; height: 12px;
+            background: #FFD700; border-radius: 4px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            10% { transform: rotate(-5deg); }
+            20% { transform: rotate(5deg); }
+            30% { transform: rotate(0deg); }
+        }
+
+        .click-hint {
+            font-size: 0.9rem;
+            color: #FF69B4;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* --- 动画特效层 (保持原有逻辑) --- */
+        .floating-images, .floating-particles, .fireworks {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5; /* 在卡片下面，背景之上 */
+        }
+        
+        /* 烟花层要在最上面 */
+        .fireworks { z-index: 20; }
+
+        /* --- 浮现图片样式 (修改版：飘落的明信片) --- */
+        .floating-image {
+            position: absolute;
+            width: 140px; /* 稍微调小一点，精致一些 */
+            height: auto; /* 高度自适应 */
+            max-height: 140px;
+            
+            /* 核心修改：拍立得风格 */
+            border: 6px solid #fff; /* 白色边框 */
+            border-bottom-width: 15px; /* 底部边框加厚，像拍立得 */
+            border-radius: 4px; /* 轻微圆角 */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* 柔和阴影 */
+            background-color: #fff;
+            
+            opacity: 0;
+            top: -200px; /* 初始位置在屏幕上方外面 */
+            
+            /* 动画：飘落 */
+            animation: fallDown linear forwards;
+            
+            object-fit: cover;
+            z-index: 4; /* 放在卡片后面，背景气球前面，增加层次感 */
+            pointer-events: none; /* 让鼠标可以穿透图片点击后面的东西 */
+        }
+
+        /* 飘落动画关键帧 */
+        @keyframes fallDown {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) rotate(var(--start-rot));
+            }
+            10% {
+                opacity: 0.9; /* 出现 */
+            }
+            80% {
+                opacity: 0.9;
+            }
+            100% {
+                opacity: 0; /* 落地消失 */
+                /* 核心：向下移动到屏幕底部 (120vh)，同时横向轻微位移 */
+                transform: translateY(120vh) translateX(var(--end-x)) rotate(var(--end-rot));
+            }
+        }
+
+        .particle {
+            position: absolute; width: 6px; height: 6px;
+            background: #FF69B4; border-radius: 50%;
+            animation: particle-float 8s linear infinite;
+        }
+        @keyframes particle-float {
+            0% { transform: translateY(100vh); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+
+        .firework {
+            position: absolute; width: 6px; height: 6px;
+            background: radial-gradient(circle, #fff, transparent);
+            border-radius: 50%;
+            animation: explode 1.5s infinite;
+        }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(25); opacity: 0; }
+        }
+
+        /* --- 响应式适配 (手机端变为上下结构) --- */
+        @media (max-width: 768px) {
+            .card-container {
+                flex-direction: column;
+                height: 85vh;
+                width: 90%;
+            }
+            .card-left {
+                flex: 1;
+                max-height: 40%;
+            }
+            .card-right {
+                flex: 1.5;
+                padding: 20px;
+            }
+            .greeting-header { font-size: 2rem; }
+            .greeting-content { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="balloon"></div><div class="balloon"></div>
+    <div class="balloon"></div><div class="balloon"></div>
+    <div class="balloon"></div><div class="balloon"></div>
+
+    <div class="floating-images" id="floatingImages"></div>
+    <div class="floating-particles" id="particles"></div>
+    <div class="fireworks" id="fireworks"></div>
+    
+    <div class="card-container">
+        <div class="card-left">
+            <img src="生日贺卡.jpg" alt="生日快乐" class="card-image">
+        </div>
+
+        <div class="card-right">
+            <h1 class="greeting-header">To: 慧雅子</h1>
+            
+            <div class="greeting-content">
+                <span class="paper-line">叮！生日快乐，</span>
+                <span class="paper-line">叮！按时长大！生日快乐呀～，</span>
+                <span class="paper-line">又老了一岁，但依旧可爱，生日快乐！</span>
+                <span class="paper-line">暴富暴美暴顺利，生日快乐！</span>
+                <span class="paper-line">这世界最可爱的你，生日快乐，永远闪闪发光！</span>
+                <!--<span class="paper-line" style="margin-top: 20px;"><b>祝你生日快乐！</b></span>-->
+            </div>
+
+            <div class="gift-box-wrapper" onclick="goToEasterEgg()">
+                <div class="gift-box"></div>
+                <div class="click-hint">点击拆开礼物 ✨</div>
+            </div>
+            
+            </div>
+    </div>
+
+    <audio id="backgroundMusic" loop autoplay>
+        <source src="../music/月球下的人.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- 保持原有的 JavaScript 逻辑完全不变 ---
+        let imageAnimationStarted = false;
+        let imageInterval;
+        let audioElement;
+        let currentImageIndex = 0;
+
+        function initializeAudio() {
+            audioElement = document.getElementById('backgroundMusic');
+            const urlParams = new URLSearchParams(window.location.search);
+            const audioTime = urlParams.get('audioTime');
+
+            // 1. 设置播放进度
+            if (audioTime) {
+                audioElement.currentTime = parseFloat(audioTime);
+            } else {
+                // 如果没有URL参数，尝试读取缓存
+                const savedTime = sessionStorage.getItem('audioCurrentTime');
+                if (savedTime) {
+                    audioElement.currentTime = parseFloat(savedTime);
+                }
+            }
+
+            // 2. 【核心】尝试暴力自动播放
+            // 我们不等待点击，直接请求播放
+            var playPromise = audioElement.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('浏览器拦截了自动播放，需要用户交互:', error);
+                    // 3. 【补救措施】
+                    // 如果浏览器真的不让播（比如在微信里），我们没办法强行突破。
+                    // 这里添加一个全屏隐形监听：用户只要碰一下屏幕任何地方（不仅仅是礼物盒），音乐立马响
+                    document.addEventListener('click', function resumePlay() {
+                        audioElement.play();
+                        document.removeEventListener('click', resumePlay);
+                    }, { once: true });
+                    document.addEventListener('touchstart', function resumePlay() {
+                        audioElement.play();
+                        document.removeEventListener('touchstart', resumePlay);
+                    }, { once: true });
+                });
+            }
+
+            // 4. 继续记录时间，为后续可能的刷新做准备
+            setInterval(() => {
+                if (audioElement && !audioElement.paused) {
+                    sessionStorage.setItem('audioCurrentTime', audioElement.currentTime);
+                }
+            }, 1000);
+        }
+
+        function createFloatingImages() {
+            if (imageAnimationStarted) return;
+            imageAnimationStarted = true;
+            const imagesContainer = document.getElementById('floatingImages');
+            
+            // 【新增】开场瞬间先撒一把（立刻生成5张），避免一开始空荡荡的
+            for(let i = 0; i < 5; i++) {
+                setTimeout(() => showNextImage(), i * 300);
+            }
+
+            // 【修改】将时间间隔从 2000 改为 600 (数值越小，图片越多/越密)
+            imageInterval = setInterval(() => { 
+                showNextImage(); 
+                // 偶尔（30%概率）额外再多生成一张，制造错落感
+                if(Math.random() > 0.7) {
+                    setTimeout(() => showNextImage(), 300);
+                }
+            }, 700); 
+        }
+
+        // 修改这里为 18 张图片
+        const maxImages = 18; 
+
+       // 2. 修改图片生成与选取函数
+        function showNextImage() {
+            const imagesContainer = document.getElementById('floatingImages');
+            
+            // 【核心修改】改为随机抽取 1 到 18 之间的数字
+            const randomIndex = Math.floor(Math.random() * maxImages) + 1;
+            
+            const image = document.createElement('img');
+            image.className = 'floating-image';
+            
+            // 使用随机生成的序号
+            image.src = `../img/流图${randomIndex}.jpg`; 
+            
+            // --- 随机参数生成 (保持之前的优化逻辑) ---
+            // 1. 起始水平位置 (0% 到 100%)
+            const startLeft = Math.random() * 100;
+            image.style.left = startLeft + '%';
+            
+            // 2. 动画持续时间 (10秒 到 18秒)
+            const duration = Math.random() * 8 + 10;
+            image.style.animationDuration = duration + 's';
+            
+            // 3. 随机大小 (新增：让图片大小有区别，0.8倍到1.2倍之间)
+            // 这样画面看起来更有层次感，不会像复制粘贴的
+            const scale = Math.random() * 0.4 + 0.8; 
+            image.style.transform = `scale(${scale})`; 
+
+            // 4. 设置 CSS 变量，控制随机的旋转和飘落方向
+            const startRot = (Math.random() * 30 - 15) + 'deg';
+            const endRot = (Math.random() * 90 - 45) + 'deg';
+            const endX = (Math.random() * 200 - 100) + 'px';
+
+            image.style.setProperty('--start-rot', startRot);
+            image.style.setProperty('--end-rot', endRot);
+            image.style.setProperty('--end-x', endX);
+            
+            image.onerror = function() { this.style.display = 'none'; };
+            imagesContainer.appendChild(image);
+            
+            // 动画结束后移除元素
+            setTimeout(() => { if (image.parentNode) image.remove(); }, duration * 1000);
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                particle.style.background = `hsl(${Math.random() * 60 + 330}, 70%, 70%)`; // 调整粒子颜色为粉/紫色
+                particlesContainer.appendChild(particle);
+                setTimeout(() => { particle.remove(); }, 8000);
+            }, 300);
+        }
+
+        function createFireworks() {
+            const fireworksContainer = document.getElementById('fireworks');
+            for (let i = 0; i < 30; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = Math.random() * 100 + '%';
+                firework.style.top = Math.random() * 100 + '%';
+                firework.style.background = `hsl(${Math.random() * 60 + 300}, 70%, 60%)`;
+                firework.style.animationDelay = Math.random() * 0.5 + 's';
+                fireworksContainer.appendChild(firework);
+                setTimeout(() => { firework.remove(); }, 1500);
+            }
+            playBirthdaySong();
+        }
+
+        function goToEasterEgg() {
+            // 1. 立即启动视觉特效 (保持不变)
+            createFireworks();
+            setTimeout(() => { createFloatingImages(); }, 1000);
+            
+            // 2. 图片飘落一段时间后，允许点击页面跳转
+            setTimeout(() => {
+                // 添加点击事件监听器，点击页面任意位置跳转
+                document.addEventListener('click', function jumpToEasterEgg() {
+                    // 清除图片生成定时器
+                    if (imageInterval) clearInterval(imageInterval);
+                    // 淡出音乐
+                    fadeOutAudio(1000);
+                    // 延迟一点时间再跳转，让音乐淡出效果完成
+                    setTimeout(() => {
+                        window.location.href = '../html/彩蛋原版.html'; 
+                    }, 1000);
+                    // 移除事件监听器，避免重复触发
+                    document.removeEventListener('click', jumpToEasterEgg);
+                });
+                
+                // 显示提示信息
+                const hint = document.createElement('div');
+                hint.style.position = 'fixed';
+                hint.style.bottom = '20px';
+                hint.style.left = '50%';
+                hint.style.transform = 'translateX(-50%)';
+                hint.style.background = 'rgba(255, 255, 255, 0.9)';
+                hint.style.padding = '10px 20px';
+                hint.style.borderRadius = '20px';
+                hint.style.fontSize = '16px';
+                hint.style.color = '#FF69B4';
+                hint.style.fontWeight = 'bold';
+                hint.style.zIndex = '100';
+                hint.textContent = '点击页面任意位置继续';
+                document.body.appendChild(hint);
+                
+                // 5秒后隐藏提示信息
+                setTimeout(() => {
+                    if (hint.parentNode) hint.remove();
+                }, 5000);
+            }, 5000); // 5秒后允许点击跳转
+        }
+
+        // 【新增】音乐淡出专用函数
+        function fadeOutAudio(duration) {
+            // 使用你代码里定义的全局变量 audioElement
+            if (!audioElement || audioElement.paused) return;
+
+            var currentVolume = audioElement.volume; // 获取当前音量
+            var interval = 50; // 每50毫秒调整一次
+            var step = currentVolume / (duration / interval); // 计算每一步减多少音量
+
+            var fadeTimer = setInterval(function() {
+                if (audioElement.volume > 0.05) { // 如果音量还大于 0.05
+                    // 防止计算误差导致音量小于0报错
+                    audioElement.volume = Math.max(0, audioElement.volume - step);
+                } else {
+                    // 音量已经很小了，直接静音并清除定时器
+                    audioElement.volume = 0;
+                    audioElement.pause();
+                    clearInterval(fadeTimer);
+                }
+            }, interval);
+        }
+
+        function playBirthdaySong() {
+            if ('AudioContext' in window || 'webkitAudioContext' in window) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioContext();
+                const notes = [261.63, 261.63, 293.66, 261.63, 349.23, 329.63, 261.63, 261.63, 293.66, 261.63, 392.00, 349.23];
+                notes.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        oscillator.frequency.value = freq;
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                        oscillator.start(audioCtx.currentTime);
+                        oscillator.stop(audioCtx.currentTime + 0.4);
+                    }, index * 400);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAudio();
+            createParticles();
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.card-container')) return; // 点击卡片不触发随机烟花，避免干扰
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = e.clientX + 'px';
+                firework.style.top = e.clientY + 'px';
+                firework.style.background = `hsl(${Math.random() * 60 + 300}, 70%, 60%)`;
+                firework.style.position = 'fixed';
+                document.getElementById('fireworks').appendChild(firework);
+                setTimeout(() => { firework.remove(); }, 1500);
+            });
+            
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    if (audioElement && !audioElement.paused) sessionStorage.setItem('audioCurrentTime', audioElement.currentTime);
+                } else {
+                    if (audioElement) {
+                        const savedTime = sessionStorage.getItem('audioCurrentTime');
+                        if (savedTime) audioElement.currentTime = parseFloat(savedTime);
+                        audioElement.play().catch(e => console.log(e));
+                    }
+                }
+            });
+        });
+        window.addEventListener('beforeunload', function() {
+            if (audioElement && !audioElement.paused) sessionStorage.setItem('audioCurrentTime', audioElement.currentTime);
+        });
+    </script>
+</body>
+</html>
